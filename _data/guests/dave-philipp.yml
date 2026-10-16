@@ -11,5 +11,7 @@ topics:
   - Governance protections and covenants in fund-level lending structures
   - Growing adoption of structured solutions among first-time NAV borrowers
   - Duration arbitrage as the core value proposition of NAV financing
-episodeTitle: "In the Booming Secondary Market, Structured Solutions are Going Mainstream"
-episodeUrl: "https://liquidcouragepod.substack.com/p/in-the-booming-secondary-market-structured"
+episodes:
+  - title: "In the Booming Secondary Market, Structured Solutions are Going Mainstream"
+    url: "https://liquidcouragepod.substack.com/p/in-the-booming-secondary-market-structured"
+    date: "2026-02-18"

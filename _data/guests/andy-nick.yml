@@ -11,5 +11,10 @@ topics:
   - Sell-side process design and timing for single-asset CV transactions
   - Management team alignment and compensation in continuation vehicle structures
   - Multi-asset CVs as a fundraising and portfolio management tool for venture GPs
-episodeTitle: "Downmarket Continuation Vehicles Have Many Upsides"
-episodeUrl: "https://liquidcouragepod.substack.com/p/downmarket-continuation-vehicles"
+episodes:
+  - title: "Venture Capital Has an $8 Trillion Liquidity Problem"
+    url: "https://liquidcouragepod.substack.com/p/venture-capital-has-an-8-trillion"
+    date: "2025-12-17"
+  - title: "Downmarket Continuation Vehicles Have Many Upsides"
+    url: "https://liquidcouragepod.substack.com/p/downmarket-continuation-vehicles"
+    date: "2025-11-25"

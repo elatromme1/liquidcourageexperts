@@ -79,20 +79,48 @@ def get_photo_src(gid, g, for_index=False):
 def json_str(s):
     return json.dumps(s)
 
+def get_episodes(g):
+    """List of {title, url, date}; falls back to the old single episodeTitle/episodeUrl fields."""
+    eps = g.get('episodes') or []
+    if not eps and g.get('episodeTitle'):
+        eps = [{'title': g['episodeTitle'], 'url': g.get('episodeUrl', ''), 'date': g.get('episodeDate', '')}]
+    return sorted(eps, key=lambda e: str(e.get('date') or ''), reverse=True)
+
+def build_appearances(g):
+    """Episodes and events list, same format as the Cool Vector bio pages."""
+    items = []
+    for ep in get_episodes(g):
+        date = f'<span class="ap-sub">{esc(ep.get("date", ""))}</span>' if ep.get('date') else ''
+        items.append(f'''          <li class="ap-episode"><a href="{esc(ep.get('url', ''))}" target="_blank" rel="noopener">{esc(ep.get('title', ''))}</a>{date}</li>''')
+    for ev in g.get('events') or []:
+        role = f'<span class="ap-sub">{esc(ev.get("role", ""))}</span>' if ev.get('role') else ''
+        items.append(f'''          <li class="ap-event"><a href="{esc(ev.get('url', ''))}" target="_blank" rel="noopener">{esc(ev.get('name', ''))}</a>{role}</li>''')
+    if not items:
+        return ''
+    heading = f'{PODCAST_NAME} Episodes / <span>Events</span>' if g.get('events') else f'{PODCAST_NAME} Episodes'
+    return f'''<h2 class="appearances-heading">{heading}</h2>
+        <ul class="appearances-list">
+{chr(10).join(items)}
+        </ul>'''
+
 def build_guest_page(gid, g):
     name = g.get('name', '')
     title = g.get('title', '')
     firm = g.get('firm', '')
     bio = g.get('bio', '')
     topics = [capitalize_first(t) for t in g.get('topics', [])]
-    ep_title = g.get('episodeTitle', '')
-    ep_url = g.get('episodeUrl', '')
+    appearance_ld = json.dumps([{'@type': 'PodcastEpisode', 'name': e.get('title', ''), 'url': e.get('url', '')}
+                                for e in get_episodes(g)])
 
     bio_short = esc(bio[:160]) + '\u2026' if len(bio) > 160 else esc(bio)
     topics_li = '\n'.join(f'          <li>{esc(t)}</li>' for t in topics)
     bio_html = f'<p class="guest-bio">{esc(bio)}</p>' if bio else ''
 
     job_title = title.split(',')[0].split('&')[0].strip()
+    events = g.get('events') or []
+    events_ld = (',\n  "performerIn": ' + json.dumps(
+        [{'@type': 'Event', 'name': e.get('name', ''), 'url': e.get('url', '')} for e in events])) if events else ''
+
     photo_src = get_photo_src(gid, g, for_index=False)
 
     page = f"""<!DOCTYPE html>
@@ -117,11 +145,7 @@ def build_guest_page(gid, g):
   }},
   "description": {json_str(bio)},
   "url": "{SITE_URL}/guests/{gid}.html",
-  "appearanceOn": {{
-    "@type": "PodcastEpisode",
-    "name": "{ep_title}",
-    "url": "{ep_url}"
-  }}
+  "appearanceOn": {appearance_ld}{events_ld}
 }}
   </script>
   <link rel="stylesheet" href="../style.css">
@@ -149,8 +173,7 @@ def build_guest_page(gid, g):
 {topics_li}
         </ul>
 
-        <div class="episodes-label">{PODCAST_NAME} episodes in which {esc(name.split()[0])} appears:</div>
-        <a class="episode-link" href="{esc(ep_url)}" target="_blank" rel="noopener">{esc(ep_title)}</a>
+        {build_appearances(g)}
       </div>
     </div>
 
@@ -169,9 +192,10 @@ def build_search_data(g):
         g.get('title', ''),
         g.get('firm', ''),
         g.get('bio', ''),
-        g.get('episodeTitle', ''),
     ]
+    parts += [e.get('title', '') for e in get_episodes(g)]
     parts += g.get('topics', [])
+    parts += [e.get('name', '') for e in g.get('events') or []]
     return ' '.join(str(p) for p in parts).lower()
 
 def build_index(guests_list):

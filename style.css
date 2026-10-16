@@ -316,3 +316,50 @@ a:hover { opacity: 0.8; }
     max-width: 260px;
   }
 }
+
+/* ── Episodes / Events (same format as the Cool Vector bios) ── */
+.appearances-heading {
+  font-size: 22px;
+  font-weight: 600;
+  color: #0f172a;
+  margin: 28px 0 12px;
+  padding-bottom: 4px;
+  border-bottom: 2px solid #0f172a;
+  display: inline-block;
+}
+
+.appearances-heading span { color: #2563eb; }
+
+.appearances-list { list-style: none; }
+
+.appearances-list li {
+  position: relative;
+  padding-left: 24px;
+  margin-bottom: 14px;
+}
+
+.appearances-list li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 6px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #0f172a;
+}
+
+.appearances-list li.ap-event::before { background: #2563eb; }
+
+.appearances-list a {
+  font-size: 15px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.appearances-list .ap-sub {
+  display: block;
+  font-size: 14px;
+  font-style: italic;
+  color: #555;
+}

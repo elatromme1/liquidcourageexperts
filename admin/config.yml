@@ -20,6 +20,22 @@ collections:
       - {label: "Firm", name: "firm", widget: "string", required: false}
       - {label: "Bio", name: "bio", widget: "text", required: false}
       - {label: "Topics", name: "topics", widget: "list", required: false}
-      - {label: "Episode Title", name: "episodeTitle", widget: "string", required: false}
-      - {label: "Episode URL", name: "episodeUrl", widget: "string", required: false}
+      - label: "Episodes"
+        name: "episodes"
+        widget: "list"
+        required: false
+        summary: "{{fields.date}} {{fields.title}}"
+        fields:
+          - {label: "Episode Title", name: "title", widget: "string"}
+          - {label: "Episode URL", name: "url", widget: "string", required: false}
+          - {label: "Episode Date", name: "date", widget: "string", required: false, hint: "YYYY-MM-DD"}
+      - label: "Events"
+        name: "events"
+        widget: "list"
+        required: false
+        summary: "{{fields.name}} ({{fields.role}})"
+        fields:
+          - {label: "Event Name", name: "name", widget: "string"}
+          - {label: "Event URL", name: "url", widget: "string", required: false}
+          - {label: "Role", name: "role", widget: "string", required: false, hint: "e.g. Speaker, Panelist, Moderator"}
       - {label: "Headshot", name: "headshot", widget: "image", required: false}
