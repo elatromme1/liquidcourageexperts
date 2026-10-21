@@ -97,7 +97,12 @@ def build_appearances(g):
         items.append(f'''          <li class="ap-event"><a href="{esc(ev.get('url', ''))}" target="_blank" rel="noopener">{esc(ev.get('name', ''))}</a>{role}</li>''')
     if not items:
         return ''
-    heading = f'{PODCAST_NAME} Episodes / <span>Events</span>' if g.get('events') else f'{PODCAST_NAME} Episodes'
+    if not get_episodes(g):
+        heading = 'Events'
+    elif g.get('events'):
+        heading = f'{PODCAST_NAME} Episodes / <span>Events</span>'
+    else:
+        heading = f'{PODCAST_NAME} Episodes'
     return f'''<h2 class="appearances-heading">{heading}</h2>
         <ul class="appearances-list">
 {chr(10).join(items)}
@@ -115,6 +120,11 @@ def build_guest_page(gid, g):
     bio_short = esc(bio[:160]) + '\u2026' if len(bio) > 160 else esc(bio)
     topics_li = '\n'.join(f'          <li>{esc(t)}</li>' for t in topics)
     bio_html = f'<p class="guest-bio">{esc(bio)}</p>' if bio else ''
+    # Event-only speakers have no podcast topics: skip the heading instead of showing an empty list
+    topics_html = f'''<div class="topics-label">Topics covered on {PODCAST_NAME}:</div>
+        <ul class="topics-list">
+{topics_li}
+        </ul>''' if topics else ''
 
     job_title = title.split(',')[0].split('&')[0].strip()
     events = g.get('events') or []
@@ -168,10 +178,7 @@ def build_guest_page(gid, g):
 
         {bio_html}
 
-        <div class="topics-label">Topics covered on {PODCAST_NAME}:</div>
-        <ul class="topics-list">
-{topics_li}
-        </ul>
+        {topics_html}
 
         {build_appearances(g)}
       </div>
